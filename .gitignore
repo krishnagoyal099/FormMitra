@@ -32,3 +32,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI & Local Scratchpads
+scratch/
+artifacts/
+.system_generated/
+
+# OS Files (Global)
+**/.DS_Store
+Thumbs.db
+
+# IDE Files
+.idea/
+*.swp
