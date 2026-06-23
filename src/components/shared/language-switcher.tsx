@@ -1,7 +1,7 @@
 // src/components/shared/language-switcher.tsx
 "use client";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
 import { useTransition } from "react";
 import { Globe } from "lucide-react";
 import { routing, type Locale } from "@/i18n/routing";
@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils/cn";
 /**
  * Language switcher dropdown.
  * On selection, redirects to the same page in the new locale.
- * Uses a native <select> for maximum accessibility and zero extra deps.
+ * Uses next-intl's locale-aware router so prefixes are handled automatically.
  */
 export function LanguageSwitcher({ className }: { className?: string }) {
   const t = useTranslations("LanguageSwitcher");
@@ -21,24 +21,9 @@ export function LanguageSwitcher({ className }: { className?: string }) {
 
   function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value as Locale;
-
     startTransition(() => {
-      // Strip any existing locale prefix from the current pathname
-      let newPath = pathname;
-      for (const loc of routing.locales) {
-        if (pathname === `/${loc}` || pathname.startsWith(`/${loc}/`)) {
-          newPath = pathname.slice(loc.length + 1) || "/";
-          break;
-        }
-      }
-
-      // Push to the new locale-prefixed path
-      const target =
-        nextLocale === routing.defaultLocale
-          ? newPath
-          : `/${nextLocale}${newPath === "/" ? "" : newPath}`;
-
-      router.push(target);
+      // next-intl's router.replace handles locale prefix automatically
+      router.replace(pathname, { locale: nextLocale });
     });
   }
 
@@ -71,4 +56,3 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     </div>
   );
 }
-

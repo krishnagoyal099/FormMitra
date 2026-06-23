@@ -3,19 +3,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { LayoutDashboard, FolderLock, FileSearch, ClipboardList, CheckSquare, Settings } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
-const NAV = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/documents", label: "Document Vault", icon: FolderLock },
-  { href: "/opportunities", label: "Opportunities", icon: FileSearch },
-  { href: "/opportunities?action-plans", label: "Action Plans", icon: CheckSquare },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
-
 export function Sidebar({ user }: { user: { name?: string | null; email?: string | null } }) {
+  const t = useTranslations("Navigation");
   const pathname = usePathname();
+
+  const NAV = [
+    { href: "/dashboard", label: t("dashboard"), icon: LayoutDashboard },
+    { href: "/documents", label: t("documents"), icon: FolderLock },
+    { href: "/opportunities", label: t("opportunities"), icon: FileSearch },
+    { href: "/settings", label: t("settings"), icon: Settings },
+  ];
+
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/5 bg-[#1F1F1F]/80 backdrop-blur-md lg:flex">
       <div className="flex h-20 items-center gap-3 border-b border-white/5 px-6 font-semibold text-white tracking-tight">
@@ -49,4 +51,3 @@ export function Sidebar({ user }: { user: { name?: string | null; email?: string
     </aside>
   );
 }
-

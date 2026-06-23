@@ -1,9 +1,11 @@
 // src/components/marketing/footer.tsx
 import Link from "next/link";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import { Twitter, Linkedin, Youtube, Instagram } from "lucide-react";
 
-export function Footer() {
+export async function Footer() {
+  const t = await getTranslations("Marketing");
   return (
     <footer className="relative z-10 w-full pt-24 pb-8 overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-4 w-full mb-24">
@@ -57,8 +59,8 @@ export function Footer() {
       </div>
 
       <div className="mt-8 flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground pt-8 px-6 md:px-8 border-t border-white/10">
-        <p>©2026 FormMitra. All rights reserved.</p>
-        <p>Powered by ASI:ONE</p>
+        <p>{t("copyright")}</p>
+        <p>{t("poweredByFooter")}</p>
       </div>
     </footer>
   );

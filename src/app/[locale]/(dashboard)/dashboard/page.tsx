@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import { prisma } from "@/lib/db/prisma";
+import { getTranslations } from "next-intl/server";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { ReadinessGauge } from "@/components/dashboard/readiness-gauge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { DeleteOpportunityButton } from "@/components/opportunities/delete-opportunity-button";
 
 export default async function DashboardPage() {
+  const t = await getTranslations("Dashboard");
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
   const userId = session.user.id;
@@ -37,26 +39,26 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title={`Welcome back, ${session.user.name?.split(" ")[0] ?? "there"} 👋`}
-        description="Your applications at a glance."
-        action={<Button asChild><Link href="/opportunities/new">Analyze new opportunity</Link></Button>}
+        title={t("welcome", { name: session.user.name?.split(" ")[0] ?? "there" })}
+        description={t("subtitle")}
+        action={<Button asChild><Link href="/opportunities/new">{t("analyzeNew")}</Link></Button>}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={FolderOpen} label="Documents" value={docCount} hint="In your vault" />
-        <StatCard icon={FileSearch} label="Opportunities" value={oppCount} hint="Analyzed" />
-        <StatCard icon={ClipboardCheck} label="Action plans" value={planCount} hint="Active" />
-        <StatCard icon={Calendar} label="Avg readiness" value={`${avgReadiness}%`} hint="Across all plans" />
+        <StatCard icon={FolderOpen}    label={t("documents")}    value={docCount}            hint={t("documentsHint")} />
+        <StatCard icon={FileSearch}    label={t("opportunities")} value={oppCount}            hint={t("opportunitiesHint")} />
+        <StatCard icon={ClipboardCheck} label={t("actionPlans")}  value={planCount}           hint={t("actionPlansHint")} />
+        <StatCard icon={Calendar}      label={t("avgReadiness")}  value={`${avgReadiness}%`} hint={t("avgReadinessHint")} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="mb-4 text-lg font-semibold">Recent opportunities</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t("recentOpportunities")}</h2>
           {upcoming.length === 0 ? (
             <EmptyState
-              title="No opportunities yet"
-              description="Upload a scholarship, internship, or scheme PDF to get eligibility analysis."
-              action={<Button asChild><Link href="/opportunities/new">Upload opportunity</Link></Button>}
+              title={t("noOpportunitiesTitle")}
+              description={t("noOpportunitiesDesc")}
+              action={<Button asChild><Link href="/opportunities/new">{t("uploadOpportunity")}</Link></Button>}
             />
           ) : (
             <div className="space-y-3">
@@ -89,7 +91,7 @@ export default async function DashboardPage() {
           )}
         </div>
         <div>
-          <h2 className="mb-4 text-lg font-semibold">Overall readiness</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t("overallReadiness")}</h2>
           <ReadinessGauge value={avgReadiness} />
         </div>
       </div>
