@@ -1,7 +1,10 @@
 name: Deploy
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
     branches: [main]
 
 # Prevent concurrent deployments
@@ -12,6 +15,7 @@ concurrency:
 jobs:
   deploy:
     name: Deploy to Vercel
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     needs: [] # Implicitly waits for CI if branch protection rules are set, but we can also trigger it explicitly.
     environment: production
