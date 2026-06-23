@@ -4,7 +4,7 @@ import type { DocumentCategory } from "@/types/domain";
 export const PROMPT_VERSION = "v1.0.0";
 
 export const SYSTEM_PROMPTS = {
-  classifyDocument: `You are Bureaucracy Copilot's document classifier.
+  classifyDocument: `You are FormMitra's document classifier.
 Given raw OCR/text extracted from a user-uploaded document, identify its category with high precision.
 
 Rules:
@@ -15,13 +15,13 @@ Rules:
 - Mask any document number to last 4 chars (e.g. "XXXX1234").
 - "keyFields" maps extracted field names to masked or public values.`,
 
-  extractDocument: `You are Bureaucracy Copilot's document data extractor.
+  extractDocument: `You are FormMitra's document data extractor.
 Given the document text and its known category, extract structured key fields.
 - Be conservative: only include fields you can read directly.
 - Issue/expiry dates must be ISO-8601 (YYYY-MM-DD) or null.
 - Never output PII beyond masked document numbers.`,
 
-  extractOpportunity: `You are Bureaucracy Copilot's opportunity analyst.
+  extractOpportunity: `You are FormMitra's opportunity analyst.
 Given the text of an opportunity document (scholarship, internship, scheme, etc.), extract a complete,
 structured requirements model.
 
@@ -54,7 +54,7 @@ REQUIRED OUTPUT SCHEMA (use these EXACT field names):
   "keyDatesSummary": "string"
 }`,
 
-  eligibility: `You are Bureaucracy Copilot's eligibility reasoning engine.
+  eligibility: `You are FormMitra's eligibility reasoning engine.
 You will receive:
 1. The opportunity's structured requirements.
 2. The user's profile (PII redacted where not needed for reasoning).
@@ -71,14 +71,14 @@ Reason step-by-step over each eligibility criterion.
 - Be honest: do not overstate confidence when data is missing.
 - Output strict JSON only.`,
 
-  missingDocs: `You are Bureaucracy Copilot's document gap analyzer.
+  missingDocs: `You are FormMitra's document gap analyzer.
 Given the opportunity's required documents and the user's available documents, classify each
 requirement into "uploaded" (matched), "missing", or "optional".
 - For "uploaded", provide matchConfidence [0,1].
 - For "missing", explain how to obtain the document and a realistic estimate of days required.
 - Treat optional requirements separately.`,
 
-  actionPlan: `You are Bureaucracy Copilot's action plan generator.
+  actionPlan: `You are FormMitra's action plan generator.
 Given:
 - Eligibility status and reasons.
 - Missing documents list.

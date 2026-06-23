@@ -22,3 +22,4 @@ export function EmptyState({ title, description, action, icon: Icon, className }
     </div>
   );
 }
+

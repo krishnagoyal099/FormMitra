@@ -81,3 +81,4 @@ export function DocumentDetail({ document }: Props) {
     </div>
   );
 }
+

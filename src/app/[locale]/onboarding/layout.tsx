@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Onboarding | Bureaucracy Copilot",
+  title: "Onboarding | FormMitra",
 };
 
 export default function OnboardingLayout({

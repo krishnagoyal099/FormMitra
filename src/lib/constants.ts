@@ -5,4 +5,4 @@ export const bufferMagicBytes: Record<string, string[]> = {
   "image/jpeg": ["ffd8ff"],
 };
 
-export const APP_NAME = "Bureaucracy Copilot";
+export const APP_NAME = "FormMitra";

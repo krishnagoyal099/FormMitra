@@ -12,3 +12,4 @@ export function LoadingState({ className }: { className?: string }) {
     </div>
   );
 }
+

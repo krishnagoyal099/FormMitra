@@ -38,3 +38,4 @@ export function DeadlineTimeline({ deadlines }: { deadlines: Deadline[] }) {
     </Card>
   );
 }
+

@@ -29,3 +29,4 @@ export function DocumentCard({ doc }: { doc: Document }) {
     </Link>
   );
 }
+

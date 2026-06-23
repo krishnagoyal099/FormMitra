@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { Loader2, Sparkles, FileText } from "lucide-react";
 import { useUploadThing } from "@/lib/storage/uploadthing";
-import { createOpportunityAction } from "@/app/(dashboard)/opportunities/actions";
+import { createOpportunityAction } from "@/app/[locale]/(dashboard)/opportunities/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

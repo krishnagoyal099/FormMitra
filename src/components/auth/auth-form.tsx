@@ -33,3 +33,4 @@ export function AuthForm({ title, description, onSubmitAction, children, actionL
     </div>
   );
 }
+

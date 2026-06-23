@@ -1,0 +1,84 @@
+{
+  "Common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit"
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "documents": "Documents",
+    "opportunities": "Opportunities",
+    "settings": "Settings",
+    "logout": "Sign Out",
+    "login": "Sign In",
+    "register": "Create Account"
+  },
+  "Auth": {
+    "loginTitle": "Welcome back",
+    "loginDescription": "Sign in to your FormMitra account",
+    "registerTitle": "Create an account",
+    "registerDescription": "Start your journey with FormMitra today",
+    "emailLabel": "Email address",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "nameLabel": "Full Name",
+    "loginButton": "Sign In",
+    "registerButton": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "forgotPassword": "Forgot password?",
+    "orContinueWith": "Or continue with"
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {name}",
+    "subtitle": "Here's what's happening with your applications",
+    "totalDocuments": "Total Documents",
+    "activeApplications": "Active Applications",
+    "opportunities": "Opportunities",
+    "completionRate": "Completion Rate"
+  },
+  "Documents": {
+    "title": "Documents",
+    "uploadDocument": "Upload Document",
+    "noDocuments": "No documents yet",
+    "noDocumentsDesc": "Upload your first document to get started",
+    "uploadedAt": "Uploaded {date}",
+    "processing": "Processing...",
+    "ready": "Ready"
+  },
+  "Opportunities": {
+    "title": "Opportunities",
+    "noOpportunities": "No opportunities found",
+    "applyNow": "Apply Now",
+    "deadline": "Deadline",
+    "eligibility": "Eligibility",
+    "viewDetails": "View Details"
+  },
+  "Settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "language": "Language",
+    "languageDesc": "Choose your preferred language",
+    "notifications": "Notifications",
+    "security": "Security"
+  },
+  "LanguageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिंदी"
+  },
+  "Marketing": {
+    "heroTitle": "Your AI-Powered Bureaucracy Copilot",
+    "heroSubtitle": "Navigate government forms, scholarships, and applications effortlessly with AI assistance.",
+    "getStarted": "Get Started Free",
+    "learnMore": "Learn More"
+  }
+}

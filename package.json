@@ -1,5 +1,5 @@
 {
-  "name": "bureaucracy-copilot",
+  "name": "form-mitra",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -36,6 +36,7 @@
     "lucide-react": "^0.460.0",
     "next": "15.0.3",
     "next-auth": "5.0.0-beta.25",
+    "next-intl": "^4.13.0",
     "pdf-parse": "^1.1.1",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",

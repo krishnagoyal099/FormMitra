@@ -28,3 +28,4 @@ export function OpportunityCard({ opp }: { opp: Opportunity }) {
     </Card>
   );
 }
+

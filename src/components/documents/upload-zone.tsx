@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { UploadCloud, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { useUploadThing } from "@/lib/storage/uploadthing";
-import { registerDocumentAction } from "@/app/(dashboard)/documents/actions";
+import { registerDocumentAction } from "@/app/[locale]/(dashboard)/documents/actions";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils/cn";
 

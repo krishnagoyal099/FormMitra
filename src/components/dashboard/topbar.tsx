@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 
 const TITLES: Record<string, string> = {
   "/dashboard": "Overview",
@@ -23,6 +24,7 @@ export function Topbar({ user }: { user: { name?: string | null } }) {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50" />
           <Input placeholder="Search…" className="h-10 w-64 pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-1 focus-visible:ring-white/20 rounded-md" />
         </div>
+        <LanguageSwitcher />
         <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-md"><Bell className="h-5 w-5" /></Button>
         <div className="grid h-10 w-10 place-items-center rounded-md bg-white text-black text-sm font-bold">
           {(user.name ?? "U").slice(0, 1).toUpperCase()}
@@ -31,3 +33,4 @@ export function Topbar({ user }: { user: { name?: string | null } }) {
     </header>
   );
 }
+

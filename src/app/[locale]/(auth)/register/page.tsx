@@ -43,7 +43,7 @@ export default function RegisterPage() {
       toast({ title: "Auto-login failed", description: "Please sign in manually.", variant: "destructive" });
       router.push("/login");
     } else {
-      toast({ title: "Account created", description: "Welcome to Bureaucracy Copilot." });
+      toast({ title: "Account created", description: "Welcome to FormMitra." });
       router.push("/dashboard");
       router.refresh();
     }

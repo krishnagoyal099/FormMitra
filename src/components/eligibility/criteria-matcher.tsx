@@ -24,3 +24,4 @@ export function CriteriaMatcher({ criteria }: { criteria: Criterion[] }) {
     </div>
   );
 }
+

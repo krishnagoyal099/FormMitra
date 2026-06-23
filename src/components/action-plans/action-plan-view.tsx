@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ReadinessProgress } from "./readiness-progress";
-import { updateActionItemStatusAction } from "@/app/(dashboard)/opportunities/actions";
+import { updateActionItemStatusAction } from "@/app/[locale]/(dashboard)/opportunities/actions";
 import { CheckCircle2, Circle, Clock, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 

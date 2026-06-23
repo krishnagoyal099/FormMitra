@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { deleteOpportunityAction } from "@/app/(dashboard)/opportunities/actions";
+import { deleteOpportunityAction } from "@/app/[locale]/(dashboard)/opportunities/actions";
 import { useToast } from "@/hooks/use-toast";
 
 export function DeleteOpportunityButton({ oppId }: { oppId: string }) {
@@ -39,3 +39,4 @@ export function DeleteOpportunityButton({ oppId }: { oppId: string }) {
     </Button>
   );
 }
+

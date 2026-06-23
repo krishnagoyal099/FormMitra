@@ -29,3 +29,4 @@ export function CategoryBadge({ category, confidence }: { category: string; conf
     </Badge>
   );
 }
+

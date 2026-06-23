@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { analyzeOpportunityAction } from "@/app/(dashboard)/opportunities/actions";
+import { analyzeOpportunityAction } from "@/app/[locale]/(dashboard)/opportunities/actions";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -54,3 +54,4 @@ export function OpportunityAnalyzer({ oppId }: { oppId: string }) {
     </div>
   );
 }
+

@@ -19,8 +19,8 @@ export function Sidebar({ user }: { user: { name?: string | null; email?: string
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/5 bg-[#1F1F1F]/80 backdrop-blur-md lg:flex">
       <div className="flex h-20 items-center gap-3 border-b border-white/5 px-6 font-semibold text-white tracking-tight">
-        <Image src="/logo.svg" alt="Bureaucracy Copilot Logo" width={32} height={32} className="rounded-md" />
-        Bureaucracy Copilot
+        <Image src="/logo.svg" alt="FormMitra Logo" width={32} height={32} className="rounded-md" />
+        FormMitra
       </div>
       <nav className="flex-1 space-y-2 p-4">
         {NAV.map((item) => {
@@ -49,3 +49,4 @@ export function Sidebar({ user }: { user: { name?: string | null; email?: string
     </aside>
   );
 }
+

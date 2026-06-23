@@ -25,3 +25,4 @@ export function RequirementList({ requirements }: { requirements: Requirement[] 
     </div>
   );
 }
+

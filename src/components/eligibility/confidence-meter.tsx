@@ -16,3 +16,4 @@ export function ConfidenceMeter({ value }: { value: number }) {
     </div>
   );
 }
+

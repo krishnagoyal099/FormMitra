@@ -10,7 +10,7 @@ export function Footer() {
         {/* Logo Column */}
         <div className="col-span-1 flex flex-col items-start justify-start px-6 md:px-8 border-r border-transparent">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Image src="/logo.svg" alt="Bureaucracy Copilot Logo" width={64} height={64} className="rounded-xl" />
+            <Image src="/logo.svg" alt="FormMitra Logo" width={64} height={64} className="rounded-xl" />
           </Link>
         </div>
 
@@ -52,14 +52,15 @@ export function Footer() {
 
       <div className="relative w-full flex items-center justify-center px-4">
         <h2 className="text-[12vw] sm:text-[14vw] font-bold tracking-tighter text-white leading-none pb-8">
-          bureaucracy
+          FormMitra
         </h2>
       </div>
 
       <div className="mt-8 flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground pt-8 px-6 md:px-8 border-t border-white/10">
-        <p>©2026 Bureaucracy Copilot. All rights reserved.</p>
+        <p>©2026 FormMitra. All rights reserved.</p>
         <p>Powered by ASI:ONE</p>
       </div>
     </footer>
   );
 }
+

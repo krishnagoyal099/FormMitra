@@ -66,3 +66,4 @@ export function DocumentTable({ documents }: { documents: DocumentRow[] }) {
     </div>
   );
 }
+
