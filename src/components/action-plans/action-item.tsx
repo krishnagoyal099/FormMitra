@@ -7,18 +7,18 @@ import { cn } from "@/lib/utils/cn";
 
 interface Props {
   item: ActionItem;
-  onToggle: (id: string, status: ActionItem["status"]) => void;
+  onToggleAction: (id: string, status: ActionItem["status"]) => void;
   disabled?: boolean;
 }
 
-export function ActionItemRow({ item, onToggle, disabled }: Props) {
+export function ActionItemRow({ item, onToggleAction, disabled }: Props) {
   const isDone = item.status === "DONE";
   
   return (
     <div className="flex items-start gap-4 rounded-xl border bg-card p-5">
       <button
         disabled={disabled}
-        onClick={() => onToggle(item.id, isDone ? "PENDING" : "DONE")}
+        onClick={() => onToggleAction(item.id, isDone ? "PENDING" : "DONE")}
         className="mt-0.5"
         aria-label="Toggle complete"
       >

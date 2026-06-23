@@ -1,33 +1,36 @@
-// src/app/(marketing)/page.tsx
 import Link from "next/link";
+import Image from "next/image";
 import { Hero } from "@/components/marketing/hero";
 import { FeatureGrid } from "@/components/marketing/feature-grid";
 import { HowItWorks } from "@/components/marketing/how-it-works";
 import { CTA } from "@/components/marketing/cta";
+import { Footer } from "@/components/marketing/footer";
 import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
   return (
-    <main className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 glass">
-        <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <span className="grid h-7 w-7 place-items-center rounded-md bg-primary text-primary-foreground text-xs font-bold">BC</span>
+    <>
+      <header className="fixed top-0 inset-x-0 w-full z-50 bg-[#1F1F1F]/80 backdrop-blur-md border-b border-white/5">
+        <div className="w-full flex h-20 items-center justify-between px-6 md:px-8">
+          <Link href="/" className="flex items-center gap-3 font-semibold text-white text-xl tracking-tight">
+            <Image src="/logo.svg" alt="Bureaucracy Copilot Logo" width={40} height={40} className="rounded-md" />
             Bureaucracy Copilot
           </Link>
-          <nav className="flex items-center gap-2">
-            <Button variant="ghost" asChild><Link href="/login">Sign in</Link></Button>
-            <Button asChild><Link href="/register">Get started</Link></Button>
+          <nav className="flex items-center gap-4">
+            <Button variant="ghost" asChild className="text-white hover:text-white hover:bg-white/10 text-sm"><Link href="/login">Sign in</Link></Button>
+            <Button asChild className="bg-white text-black hover:bg-white/90 rounded-none px-6"><Link href="/register">Get started</Link></Button>
           </nav>
         </div>
       </header>
-      <Hero />
-      <FeatureGrid />
-      <HowItWorks />
-      <CTA />
-      <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        Built for Hack-A-Agent · Powered by ASI:ONE
-      </footer>
-    </main>
+      
+      <main className="flex-1 w-full pt-20">
+        <Hero />
+        <FeatureGrid />
+        <HowItWorks />
+        <CTA />
+      </main>
+
+      <Footer />
+    </>
   );
 }

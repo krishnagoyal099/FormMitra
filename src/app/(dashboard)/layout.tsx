@@ -20,11 +20,23 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
-      <Sidebar user={session.user} />
-      <div className="flex flex-1 flex-col lg:pl-64">
-        <Topbar user={session.user} />
-        <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">{children}</main>
+    <div className="dark relative flex min-h-screen bg-background text-foreground overflow-x-hidden">
+      <div className="noise-overlay" />
+      <div className="absolute inset-0 z-0 flex pointer-events-none">
+        <div className="grid-lines-4 w-full">
+          <div className="grid-line" />
+          <div className="grid-line" />
+          <div className="grid-line" />
+          <div className="grid-line" />
+        </div>
+      </div>
+      
+      <div className="relative z-10 flex w-full">
+        <Sidebar user={session.user} />
+        <div className="flex flex-1 flex-col lg:pl-64">
+          <Topbar user={session.user} />
+          <main className="flex-1 p-4 md:p-8 w-full">{children}</main>
+        </div>
       </div>
     </div>
   );

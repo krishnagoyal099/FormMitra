@@ -25,7 +25,7 @@
     --radius: 0.6rem;
   }
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 12%; /* #1F1F1F */
     --foreground: 0 0% 98%;
     --card: 240 10% 5%;
     --card-foreground: 0 0% 98%;
@@ -56,6 +56,27 @@
   .card-hover { @apply transition-all hover:shadow-md hover:border-border/80 hover:-translate-y-0.5; }
   .gradient-text {
     @apply bg-gradient-to-br from-foreground via-foreground/80 to-foreground/50 bg-clip-text text-transparent;
+  }
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.12;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+  .grid-lines-4 {
+    @apply absolute inset-0 grid grid-cols-1 md:grid-cols-4 pointer-events-none z-0;
+  }
+  .grid-line {
+    @apply border-l border-white/[0.03] h-full w-full;
+  }
+  .grid-line:last-child {
+    @apply border-r;
+  }
+  .bg-dot-pattern {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 16px 16px;
   }
   .shimmer {
     background: linear-gradient(90deg, hsl(var(--muted)) 0%, hsl(var(--muted)/0.5) 50%, hsl(var(--muted)) 100%);

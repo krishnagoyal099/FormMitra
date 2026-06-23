@@ -1,7 +1,7 @@
 // src/hooks/use-action-state.ts
 "use client";
 import { useState, useCallback } from "react";
-import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { isRedirectError } from "next/dist/client/components/redirect";
 
 interface ActionState<T> {
   data: T | null;

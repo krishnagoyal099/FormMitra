@@ -5,21 +5,21 @@ import { ReactNode } from "react";
 interface AuthFormProps {
   title: string;
   description: string;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmitAction: (e: React.FormEvent<HTMLFormElement>) => void;
   children: ReactNode;
   actionLabel: string;
   busy?: boolean;
   footer?: ReactNode;
 }
 
-export function AuthForm({ title, description, onSubmit, children, actionLabel, busy, footer }: AuthFormProps) {
+export function AuthForm({ title, description, onSubmitAction, children, actionLabel, busy, footer }: AuthFormProps) {
   return (
     <div className="w-full max-w-md">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmitAction} className="space-y-4">
         {children}
         <button
           type="submit"
