@@ -16,6 +16,28 @@ import { createHash } from "crypto";
 import { prisma } from "@/lib/db/prisma";
 import { UniversalProfileSchema, emptyProfile } from "@/lib/schemas/universal-profile";
 
+// ── CORS ──────────────────────────────────────────────────────────────────────
+// The extension popup/background uses fetch() with a Bearer token — there is no
+// sensitive session cookie to protect. Explicit CORS headers ensure cross-browser
+// compatibility (Chrome MV3 bypasses CORS implicitly; Firefox/Safari do not).
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  "Access-Control-Max-Age": "86400",
+} as const;
+
+/** Wraps a NextResponse to inject CORS headers. */
+function withCors(res: NextResponse): NextResponse {
+  Object.entries(CORS_HEADERS).forEach(([k, v]) => res.headers.set(k, v));
+  return res;
+}
+
+/** Handles CORS preflight (OPTIONS) for browser/extension clients. */
+export function OPTIONS(): NextResponse {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
+
 /** Computes the SHA-256 hex digest of a raw token string. */
 function hashToken(rawToken: string): string {
   return createHash("sha256").update(rawToken, "utf8").digest("hex");
@@ -35,10 +57,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   // ── 1. Extract bearer token ──────────────────────────────────────────────
   const rawToken = extractBearerToken(req);
   if (!rawToken) {
-    return NextResponse.json(
+    return withCors(NextResponse.json(
       { error: "Missing or malformed Authorization header. Expected: Bearer fmt_ext_..." },
       { status: 401 }
-    );
+    ));
   }
 
   // ── 2. Hash and lookup token record ──────────────────────────────────────
@@ -54,13 +76,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   });
 
   if (!tokenRecord) {
-    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    return withCors(NextResponse.json({ error: "Invalid token" }, { status: 401 }));
   }
   if (tokenRecord.revokedAt !== null) {
-    return NextResponse.json({ error: "Token has been revoked" }, { status: 401 });
+    return withCors(NextResponse.json({ error: "Token has been revoked" }, { status: 401 }));
   }
   if (tokenRecord.expiresAt < new Date()) {
-    return NextResponse.json({ error: "Token has expired. Please generate a new token from FormMitra settings." }, { status: 401 });
+    return withCors(NextResponse.json({ error: "Token has expired. Please generate a new token from FormMitra settings." }, { status: 401 }));
   }
 
   // ── 3. Update lastUsedAt (fire-and-forget, non-blocking) ─────────────────
@@ -81,12 +103,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   // If no profile exists yet, return an empty profile with instructions
   if (!profile || !profile.universalProfile) {
-    return NextResponse.json({
+    return withCors(NextResponse.json({
       profile: emptyProfile(),
       profileExtractedAt: null,
       profileComplete: false,
       message: "No profile extracted yet. Please upload your documents in FormMitra and run the extraction.",
-    });
+    }));
   }
 
   // ── 5. Validate the stored JSON against our current schema ────────────────
@@ -95,9 +117,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const parsedProfile = UniversalProfileSchema.safeParse(profile.universalProfile);
   const safeProfile = parsedProfile.success ? parsedProfile.data : emptyProfile();
 
-  return NextResponse.json({
+  return withCors(NextResponse.json({
     profile: safeProfile,
     profileExtractedAt: profile.profileExtractedAt?.toISOString() ?? null,
     profileComplete: profile.profileComplete,
-  });
+  }));
 }

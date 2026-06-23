@@ -13,6 +13,7 @@
 //   - Automatically after the last document finishes processing (future cron)
 // ─────────────────────────────────────────────────────────────────────────────
 import { randomUUID } from "crypto";
+import { Prisma } from "@prisma/client";
 import { callAsione } from "../asi-one";
 import { UniversalProfileExtractionSchema } from "../schemas";
 import { buildUniversalProfilePrompt, type DocumentContext } from "../prompts";
@@ -21,6 +22,7 @@ import { prisma } from "@/lib/db/prisma";
 import { computeProfileCompletion } from "@/lib/schemas/universal-profile";
 import type { ServiceContext } from "./service-context";
 import { logger } from "@/lib/logger";
+
 
 /**
  * Runs the universal profile extraction for a user.
@@ -39,7 +41,7 @@ export async function extractUniversalProfileService(ctx: ServiceContext) {
       status: "READY",
       deletedAt: null,
       // Only include documents that have been through AI extraction
-      extractedJson: { not: null },
+      extractedJson: { not: Prisma.JsonNull },
     },
     select: {
       id: true,

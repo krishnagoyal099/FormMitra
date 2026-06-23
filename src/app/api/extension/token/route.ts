@@ -14,6 +14,25 @@ import { auth } from "@/lib/auth/config";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
+// ── CORS ──────────────────────────────────────────────────────────────────────
+// These endpoints are called by both the web Settings page (same-origin, no CORS
+// needed) and the Chrome extension popup during validateToken (cross-origin).
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  "Access-Control-Max-Age": "86400",
+} as const;
+
+function withCors(res: NextResponse): NextResponse {
+  Object.entries(CORS_HEADERS).forEach(([k, v]) => res.headers.set(k, v));
+  return res;
+}
+
+export function OPTIONS(): NextResponse {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
+
 const TOKEN_TTL_DAYS = 30;
 const MAX_TOKENS_PER_USER = 5;
 
@@ -91,7 +110,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     },
   }).catch(() => {/* swallow audit failure */});
 
-  return NextResponse.json({
+  return withCors(NextResponse.json({
     // ⚠️ This is the ONLY time the raw token is returned.
     // The client must copy it immediately — it cannot be retrieved again.
     token: rawToken,
@@ -99,7 +118,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     label: record.label,
     expiresAt: record.expiresAt.toISOString(),
     createdAt: record.createdAt.toISOString(),
-  });
+  }));
 }
 
 // ── GET: List active tokens ───────────────────────────────────────────────────
@@ -124,7 +143,7 @@ export async function GET(): Promise<NextResponse> {
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json({ tokens });
+  return withCors(NextResponse.json({ tokens }));
 }
 
 // ── DELETE: Revoke a token ────────────────────────────────────────────────────
@@ -168,5 +187,5 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
     },
   }).catch(() => {/* swallow */});
 
-  return NextResponse.json({ success: true });
+  return withCors(NextResponse.json({ success: true }));
 }
