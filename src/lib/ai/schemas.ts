@@ -99,3 +99,126 @@ export const ActionPlanResultSchema = z.object({
   })),
 });
 export type ActionPlanResult = z.infer<typeof ActionPlanResultSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIVERSAL PROFILE EXTRACTION — AI output schema for Chrome Extension auto-fill
+// ─────────────────────────────────────────────────────────────────────────────
+// The AI synthesizes data from ALL of a user's uploaded documents and returns
+// this flat, structured object. It is stored as `Profile.universalProfile`
+// and served to the Chrome Extension via GET /api/extension/profile.
+// All fields use .catch(null) so partial outputs are valid — we never want
+// a single missing field to cause the entire extraction to fail.
+export const UniversalProfileExtractionSchema = z.object({
+  // Personal
+  fullName: z.string().nullable().catch(null),
+  firstName: z.string().nullable().catch(null),
+  middleName: z.string().nullable().catch(null),
+  lastName: z.string().nullable().catch(null),
+  dateOfBirth: z.string().nullable().catch(null),      // ISO: "YYYY-MM-DD"
+  birthYear: z.string().nullable().catch(null),
+  birthMonth: z.string().nullable().catch(null),
+  birthDay: z.string().nullable().catch(null),
+  gender: z.enum(["MALE","FEMALE","OTHER","PREFER_NOT_TO_SAY"]).nullable().catch(null),
+  nationality: z.string().nullable().catch(null),
+  religion: z.string().nullable().catch(null),
+
+  // Caste & Category
+  casteCategory: z.enum(["GENERAL","OBC","SC","ST","EWS","OTHER"]).nullable().catch(null),
+  casteName: z.string().nullable().catch(null),
+  isSpecialCategory: z.boolean().nullable().catch(null),
+  specialCategoryLabel: z.string().nullable().catch(null),
+
+  // Contact
+  mobileNumber: z.string().nullable().catch(null),
+  alternateMobile: z.string().nullable().catch(null),
+  emailAddress: z.string().nullable().catch(null),
+
+  // Permanent Address
+  permanentAddressLine1: z.string().nullable().catch(null),
+  permanentAddressLine2: z.string().nullable().catch(null),
+  permanentVillage: z.string().nullable().catch(null),
+  permanentCity: z.string().nullable().catch(null),
+  permanentTaluka: z.string().nullable().catch(null),
+  permanentDistrict: z.string().nullable().catch(null),
+  permanentState: z.string().nullable().catch(null),
+  permanentPincode: z.string().nullable().catch(null),
+  permanentCountry: z.string().nullable().catch(null),
+
+  // Current Address
+  isSameAsPermanent: z.boolean().nullable().catch(null),
+  currentAddressLine1: z.string().nullable().catch(null),
+  currentAddressLine2: z.string().nullable().catch(null),
+  currentVillage: z.string().nullable().catch(null),
+  currentCity: z.string().nullable().catch(null),
+  currentTaluka: z.string().nullable().catch(null),
+  currentDistrict: z.string().nullable().catch(null),
+  currentState: z.string().nullable().catch(null),
+  currentPincode: z.string().nullable().catch(null),
+
+  // Family
+  fatherName: z.string().nullable().catch(null),
+  fatherOccupation: z.string().nullable().catch(null),
+  fatherMobile: z.string().nullable().catch(null),
+  motherName: z.string().nullable().catch(null),
+  motherOccupation: z.string().nullable().catch(null),
+  motherMobile: z.string().nullable().catch(null),
+  guardianName: z.string().nullable().catch(null),
+  guardianRelation: z.string().nullable().catch(null),
+  annualFamilyIncome: z.number().nullable().catch(null),
+  familySize: z.number().int().nullable().catch(null),
+
+  // IDs — Aadhaar MUST be returned masked. Full Aadhaar must never appear.
+  aadhaarMasked: z.string().nullable().catch(null),    // "XXXX-XXXX-1234"
+  panNumber: z.string().nullable().catch(null),
+  samagraId: z.string().nullable().catch(null),
+  voterIdMasked: z.string().nullable().catch(null),
+  domicileNumber: z.string().nullable().catch(null),
+  casteCertificateNumber: z.string().nullable().catch(null),
+  incomeCertificateNumber: z.string().nullable().catch(null),
+
+  // Bank
+  bankName: z.string().nullable().catch(null),
+  bankAccountNumber: z.string().nullable().catch(null),
+  bankIfscCode: z.string().nullable().catch(null),
+  bankBranchName: z.string().nullable().catch(null),
+  bankAccountHolderName: z.string().nullable().catch(null),
+  bankAccountType: z.string().nullable().catch(null),
+  bankMicrCode: z.string().nullable().catch(null),
+
+  // Academic
+  currentInstitutionName: z.string().nullable().catch(null),
+  currentInstitutionCode: z.string().nullable().catch(null),
+  currentInstitutionDistrict: z.string().nullable().catch(null),
+  currentInstitutionState: z.string().nullable().catch(null),
+  currentCourseName: z.string().nullable().catch(null),
+  currentCourseType: z.string().nullable().catch(null),
+  currentCourseYear: z.string().nullable().catch(null),
+  currentAcademicYear: z.string().nullable().catch(null),
+  currentAdmissionYear: z.string().nullable().catch(null),
+  enrollmentNumber: z.string().nullable().catch(null),
+  rollNumber: z.string().nullable().catch(null),
+  tenthBoardName: z.string().nullable().catch(null),
+  tenthSchoolName: z.string().nullable().catch(null),
+  tenthRollNumber: z.string().nullable().catch(null),
+  tenthPassYear: z.string().nullable().catch(null),
+  tenthPercentage: z.number().nullable().catch(null),
+  tenthTotalMarks: z.number().nullable().catch(null),
+  tenthObtainedMarks: z.number().nullable().catch(null),
+  twelfthBoardName: z.string().nullable().catch(null),
+  twelfthSchoolName: z.string().nullable().catch(null),
+  twelfthRollNumber: z.string().nullable().catch(null),
+  twelfthPassYear: z.string().nullable().catch(null),
+  twelfthPercentage: z.number().nullable().catch(null),
+  twelfthTotalMarks: z.number().nullable().catch(null),
+  twelfthObtainedMarks: z.number().nullable().catch(null),
+  twelfthStream: z.string().nullable().catch(null),
+  graduationDegreeName: z.string().nullable().catch(null),
+  graduationUniversity: z.string().nullable().catch(null),
+  graduationPassYear: z.string().nullable().catch(null),
+  graduationPercentage: z.number().nullable().catch(null),
+
+  // Extraction metadata
+  confidence: z.number().min(0).max(1).catch(0),
+  extractionNotes: z.array(z.string()).catch([]),
+});
+export type UniversalProfileExtraction = z.infer<typeof UniversalProfileExtractionSchema>;

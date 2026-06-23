@@ -120,6 +120,7 @@ model User {
   accounts        Account[]
   analysisRuns    AnalysisRun[]
   auditLogs       AuditLog[]
+  extensionTokens ExtensionToken[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -190,6 +191,12 @@ model Profile {
   education           Json     // structured, non-PII
   profileComplete     Boolean  @default(false)
   readinessBaseline   Int      @default(0)   // 0..100
+
+  // Universal flat profile for Chrome Extension auto-fill
+  // Populated by the AI extraction service across all user documents.
+  // Contains masked PII only (no raw Aadhaar, no unmasked IDs).
+  universalProfile    Json?    // UniversalProfile schema
+  profileExtractedAt  DateTime? // Timestamp of last AI extraction run
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -419,4 +426,33 @@ model AuditLog {
 
   @@index([userId, createdAt])
   @@index([entity, entityId])
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// EXTENSION TOKENS — Chrome Extension authentication
+// ────────────────────────────────────────────────────────────────────────────
+
+// GitHub-style Personal Access Tokens for the FormMitra Chrome Extension.
+// The raw token is shown to the user exactly once and NEVER stored.
+// We store only a SHA-256 hash of the raw token for constant-time comparison.
+model ExtensionToken {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // SHA-256 hex digest of the raw "fmt_ext_<base64url>" token.
+  // The raw token is never stored — this is the only representation.
+  tokenHash   String    @unique
+
+  // Human-readable label the user assigns. e.g. "My Laptop Chrome"
+  label       String    @default("FormMitra Extension")
+
+  // Token metadata
+  lastUsedAt  DateTime?
+  expiresAt   DateTime  // 30 days from creation
+  revokedAt   DateTime? // null = active
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
 }

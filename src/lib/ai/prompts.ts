@@ -213,3 +213,62 @@ export function buildActionPlanPrompt(payload: {
            `Return the action plan as strict JSON.`,
   };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIVERSAL PROFILE EXTRACTION PROMPT
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const SYSTEM_PROMPTS_EXTENDED = {
+  extractUniversalProfile: `You are FormMitra's Universal Profile Extractor.
+
+Your task: Given structured data extracted from multiple government documents belonging to ONE person,
+synthesize a single, comprehensive Universal Applicant Profile.
+
+Rules:
+1. OUTPUT ONLY strict JSON. No markdown, no explanation, no code fences.
+2. If a field appears in multiple documents with DIFFERENT values, use the value from the most
+   authoritative or most recent document. E.g., prefer Aadhaar for name over marksheet.
+3. Aadhaar numbers: Extract and return ONLY the LAST 4 digits in masked format "XXXX-XXXX-NNNN".
+   Never return the full 12-digit Aadhaar number.
+4. Date of Birth: Always convert to ISO 8601 format YYYY-MM-DD. Also populate birthYear, birthMonth, birthDay.
+5. Percentages: Return as numbers 0-100, not fractions (85.4, not 0.854).
+6. Names: Use EXACTLY as written on government documents. Do not correct spelling.
+7. If a field cannot be determined from ANY document, set it to null.
+8. "confidence" field: Your calibrated probability [0,1] that the overall extraction is accurate.
+9. "extractionNotes": A short list of any conflicts, assumptions, or missing data you noticed.
+10. CRITICAL: The output must validate against the schema. Do NOT add extra fields.`,
+} as const;
+
+export interface DocumentContext {
+  category: string;       // e.g. "ID_PROOF", "INCOME_PROOF"
+  documentType: string;   // e.g. "Aadhaar Card", "Income Certificate"
+  extractedFields: Record<string, string>; // key: fieldName, value: extracted value
+  issuingAuthority: string | null;
+  issueDate: string | null;
+}
+
+/**
+ * Builds the prompt for synthesizing all extracted documents into one Universal Profile.
+ *
+ * @param documents - Array of documents with their extracted field values
+ * @returns System + user message pair for callAsione
+ */
+export function buildUniversalProfilePrompt(documents: DocumentContext[]): { system: string; user: string } {
+  const docsText = documents
+    .map((doc, idx) =>
+      `--- Document ${idx + 1}: ${doc.documentType} (${doc.category}) ---\n` +
+      `Issuing Authority: ${doc.issuingAuthority ?? "Unknown"}\n` +
+      `Issue Date: ${doc.issueDate ?? "Unknown"}\n` +
+      `Extracted Fields:\n${JSON.stringify(doc.extractedFields, null, 2)}`
+    )
+    .join("\n\n");
+
+  return {
+    system: SYSTEM_PROMPTS_EXTENDED.extractUniversalProfile,
+    user:
+      `The following ${documents.length} document(s) belong to a single applicant.\n` +
+      `Synthesize them into ONE Universal Profile JSON.\n\n` +
+      `${docsText}\n\n` +
+      `Return the Universal Profile as strict JSON only. Every field must be present — use null for unknowns.`,
+  };
+}
