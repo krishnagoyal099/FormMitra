@@ -30,6 +30,7 @@ export function OpportunityUploader() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState<string>("SCHOLARSHIP");
   const [provider, setProvider] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -40,21 +41,34 @@ export function OpportunityUploader() {
   });
 
   async function analyze() {
-    if (!file || !title) {
-      toast({ title: "Missing fields", description: "Add a title and upload a file.", variant: "destructive" });
+    if (!title) {
+      toast({ title: "Missing title", description: "Add an opportunity title.", variant: "destructive" });
+      return;
+    }
+    if (!file && !sourceUrl) {
+      toast({ title: "Missing source", description: "Provide either a Document or a Source URL.", variant: "destructive" });
       return;
     }
     setBusy(true);
     try {
-      const uploaded = await startUpload([file], { title, type });
-      if (!uploaded?.[0]) throw new Error("Upload failed");
-      const u = uploaded[0];
+      let uploadKey: string | undefined;
+      let mimeType: string | undefined;
+
+      if (file) {
+        const uploaded = await startUpload([file], { title, type });
+        if (!uploaded?.[0]) throw new Error("Upload failed");
+        uploadKey = uploaded[0].key;
+        mimeType = uploaded[0].serverData?.mimeType ?? file.type;
+      }
+
       const res = await createOpportunityAction({
         title, type: type as typeof TYPES[number]["value"],
         provider: provider || undefined,
-        uploadThingKey: u.key,
-        fileName: file.name, fileSize: file.size,
-        mimeType: u.serverData?.mimeType ?? file.type,
+        sourceUrl: sourceUrl || undefined,
+        uploadThingKey: uploadKey,
+        fileName: file?.name,
+        fileSize: file?.size,
+        mimeType: mimeType,
       });
       if (!res.ok) throw new Error(res.message);
       toast({ title: "Analysis complete", description: "Opportunity analyzed by ASI:ONE." });
@@ -86,20 +100,27 @@ export function OpportunityUploader() {
           <Label htmlFor="provider">Provider (optional)</Label>
           <Input id="provider" value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="e.g. Ministry of Education" />
         </div>
-        <div {...getRootProps()} className="rounded-xl border-2 border-dashed p-8 text-center cursor-pointer hover:border-primary/50">
-          <input {...getInputProps()} />
-          {file ? (
-            <div className="flex flex-col items-center gap-2">
-              <FileText className="h-8 w-8 text-muted-foreground" />
-              <p className="text-sm font-medium">{file.name}</p>
-              <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-            </div>
-          ) : (
-            <>
-              <FileText className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-2 text-sm">{isDragActive ? "Drop here" : "Click or drag to upload"}</p>
-            </>
-          )}
+        <div>
+          <Label htmlFor="sourceUrl">Source URL (Alternative if no document)</Label>
+          <Input id="sourceUrl" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://example.com/scholarship" type="url" />
+        </div>
+        <div className="space-y-2">
+          <Label>Upload Document (Preferred)</Label>
+          <div {...getRootProps()} className="rounded-xl border-2 border-dashed p-8 text-center cursor-pointer hover:border-primary/50 transition-colors bg-muted/20">
+            <input {...getInputProps()} />
+            {file ? (
+              <div className="flex flex-col items-center gap-2">
+                <FileText className="h-8 w-8 text-muted-foreground" />
+                <p className="text-sm font-medium">{file.name}</p>
+                <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+              </div>
+            ) : (
+              <>
+                <FileText className="mx-auto h-8 w-8 text-muted-foreground" />
+                <p className="mt-2 text-sm">{isDragActive ? "Drop here" : "Click or drag to upload PDF/Image"}</p>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

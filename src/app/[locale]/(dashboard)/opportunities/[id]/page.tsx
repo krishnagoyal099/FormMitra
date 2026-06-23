@@ -32,14 +32,25 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   }
 
   if (opp.status === "FAILED") {
+    const retryAnalysis = async () => {
+      "use server";
+      const { analyzeOpportunityAction } = await import("../actions");
+      await analyzeOpportunityAction(opp.id);
+    };
+
     return (
       <div className="space-y-8">
         <PageHeader title={opp.title} description="Analysis Failed" />
         <Card className="border-destructive/50 bg-destructive/10">
           <CardContent className="pt-6">
-            <div className="flex flex-col items-center justify-center text-center space-y-2">
-              <p className="text-destructive font-medium">We encountered an error while analyzing this opportunity.</p>
-              <p className="text-sm text-muted-foreground">Please try deleting and re-uploading the document.</p>
+            <div className="flex flex-col items-center justify-center text-center space-y-4">
+              <div>
+                <p className="text-destructive font-medium">We encountered an error while analyzing this opportunity.</p>
+                <p className="text-sm text-muted-foreground mt-1">The AI service may have timed out. Please try again.</p>
+              </div>
+              <form action={retryAnalysis}>
+                <Button variant="destructive" type="submit">Retry Analysis</Button>
+              </form>
             </div>
           </CardContent>
         </Card>

@@ -16,6 +16,7 @@ import { extractTextFromFile } from "@/lib/files/extract-text";
 import { logger } from "@/lib/logger";
 import { createErrorResult, createSuccessResult, type ActionResult } from "@/lib/utils/action";
 import { env } from "@/config/env";
+import { sendAnalysisCompleteEmail } from "@/lib/email/nodemailer";
 
 export async function createOpportunityAction(
   input: unknown
@@ -30,8 +31,14 @@ export async function createOpportunityAction(
   const { uploadThingKey, fileName, fileSize, mimeType, title, type, sourceUrl, provider } = parsed.data;
 
   try {
-    const fileBuffer = await fetchUploadThingFile(uploadThingKey);
-    const extractedText = await extractTextFromFile(fileBuffer, mimeType);
+    let extractedText = "";
+    let fileTypeParam = undefined;
+
+    if (uploadThingKey && mimeType) {
+      const fileBuffer = await fetchUploadThingFile(uploadThingKey);
+      extractedText = await extractTextFromFile(fileBuffer, mimeType);
+      fileTypeParam = mimeType === "application/pdf" ? "PDF" : mimeType === "image/png" ? "PNG" : "JPG";
+    }
 
     const opp = await prisma.opportunity.create({
       data: {
@@ -39,7 +46,7 @@ export async function createOpportunityAction(
         title, type,
         sourceUrl, provider,
         fileName, uploadThingKey, fileSize,
-        fileType: mimeType === "application/pdf" ? "PDF" : mimeType === "image/png" ? "PNG" : "JPG",
+        fileType: fileTypeParam as "PDF" | "PNG" | "JPG" | undefined,
         extractedText,
         status: "DRAFT", // Start as DRAFT to indicate processing
       },
@@ -56,9 +63,9 @@ export async function createOpportunityAction(
 export async function analyzeOpportunityAction(oppId: string): Promise<ActionResult<boolean>> {
   const user = await requireUser();
   
-  // Atomic row lock: Claim the DRAFT opportunity
+  // Atomic row lock: Claim the DRAFT or FAILED opportunity
   const updatedOpp = await prisma.opportunity.updateMany({
-    where: { id: oppId, userId: user.id, status: "DRAFT" },
+    where: { id: oppId, userId: user.id, status: { in: ["DRAFT", "FAILED"] } },
     data: { status: "PROCESSING" } 
   });
 
@@ -74,7 +81,11 @@ export async function analyzeOpportunityAction(oppId: string): Promise<ActionRes
 
   try {
     // 1. Extract requirements via ASI:ONE
-    const requirements = await extractOpportunityService(opp.extractedText ?? "", { title: opp.title, type: opp.type });
+    const requirements = await extractOpportunityService(opp.extractedText ?? "", { 
+      title: opp.title, 
+      type: opp.type,
+      sourceUrl: opp.sourceUrl
+    });
 
     await prisma.opportunity.update({
       where: { id: oppId },
@@ -154,6 +165,24 @@ export async function analyzeOpportunityAction(oppId: string): Promise<ActionRes
     await prisma.opportunity.update({
       where: { id: oppId },
       data: { status: "ANALYZED", analyzedAt: new Date() },
+    });
+
+    // Fire-and-forget: send the analysis-complete email without blocking the response.
+    // `after()` runs this callback after the current server action response is flushed.
+    after(async () => {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { email: true, name: true },
+      });
+      if (dbUser?.email) {
+        await sendAnalysisCompleteEmail({
+          to: dbUser.email,
+          userName: dbUser.name ?? dbUser.email,
+          opportunityTitle: opp.title,
+          opportunityId: oppId,
+          readinessScore: plan.readinessScore,
+        });
+      }
     });
 
     revalidatePath(`/opportunities/${oppId}`);

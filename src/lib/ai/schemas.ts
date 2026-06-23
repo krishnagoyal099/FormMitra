@@ -36,13 +36,13 @@ export const OpportunityRequirementsSchema = z.object({
     label: z.string(),
     date: z.string().nullable().catch(null),
     type: z.enum(["APPLICATION","DOCUMENT_SUBMISSION","INTERVIEW","RESULT","OTHER"]).catch("OTHER"),
-  })).catch([]),
+  })),
   applicationSteps: z.array(z.object({
     order: z.number().int().catch(0),
     title: z.string(),
     description: z.string(),
     estimatedMinutes: z.number().int().min(0).catch(0),
-  })).catch([]),
+  })),
   importantNotes: z.array(z.string()).catch([]),
   keyDatesSummary: z.string().catch(""),
 });
@@ -58,7 +58,7 @@ export const EligibilityResultSchema = z.object({
     criterion: z.string().catch("Unknown"),
     verdict: z.enum(["PASS","FAIL","UNCLEAR"]).catch("UNCLEAR"),
     explanation: z.string().catch(""),
-  })).catch([]),
+  })),
   warnings: z.array(z.string()).catch([]),
   recommendations: z.array(z.string()).catch([]),
 });
@@ -70,18 +70,18 @@ export const MissingDocsResultSchema = z.object({
     documentId: z.string().catch(""),
     documentName: z.string().catch(""),
     matchConfidence: z.number().min(0).max(1).catch(0),
-  })).catch([]),
+  })),
   missing: z.array(z.object({
     requirement: z.string().catch(""),
     category: z.string().catch("OTHER"),
     howToObtain: z.string().catch(""),
     estimatedDays: z.number().int().min(0).catch(0),
     isOptional: z.boolean().catch(false),
-  })).catch([]),
+  })),
   optional: z.array(z.object({
     requirement: z.string().catch(""),
     description: z.string().catch(""),
-  })).catch([]),
+  })),
 });
 export type MissingDocsResult = z.infer<typeof MissingDocsResultSchema>;
 
@@ -96,6 +96,6 @@ export const ActionPlanResultSchema = z.object({
     priority: z.enum(["CRITICAL","HIGH","MEDIUM","LOW"]).catch("MEDIUM"),
     estimatedMinutes: z.number().int().min(0).catch(0),
     category: z.enum(["DOCUMENT","PROFILE","VERIFICATION","SUBMISSION","FOLLOW_UP"]).catch("DOCUMENT"),
-  })).catch([]),
+  })),
 });
 export type ActionPlanResult = z.infer<typeof ActionPlanResultSchema>;

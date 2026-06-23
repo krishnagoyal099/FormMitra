@@ -260,10 +260,10 @@ model Opportunity {
   provider        String?
 
   // Original upload
-  fileName        String
-  uploadThingKey  String           @unique
-  fileSize        Int
-  fileType        FileType
+  fileName        String?
+  uploadThingKey  String?          @unique
+  fileSize        Int?
+  fileType        FileType?
   extractedText   String?
 
   // AI-extracted structured data

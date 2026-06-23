@@ -69,14 +69,46 @@ Reason step-by-step over each eligibility criterion.
   - UNKNOWN if you cannot determine.
 - Provide a calibrated confidence [0,1].
 - Be honest: do not overstate confidence when data is missing.
-- Output strict JSON only.`,
+
+REQUIRED OUTPUT SCHEMA:
+{
+  "status": "ELIGIBLE" | "POSSIBLY_ELIGIBLE" | "NOT_ELIGIBLE" | "UNKNOWN",
+  "confidence": 0.9,
+  "matchedCriteria": ["string"],
+  "unmatchedCriteria": ["string"],
+  "missingInformation": ["string"],
+  "reasons": [
+    {
+      "criterion": "string",
+      "verdict": "PASS" | "FAIL" | "UNCLEAR",
+      "explanation": "string"
+    }
+  ],
+  "warnings": ["string"],
+  "recommendations": ["string"]
+}
+Output strict JSON only.`,
 
   missingDocs: `You are FormMitra's document gap analyzer.
 Given the opportunity's required documents and the user's available documents, classify each
 requirement into "uploaded" (matched), "missing", or "optional".
 - For "uploaded", provide matchConfidence [0,1].
 - For "missing", explain how to obtain the document and a realistic estimate of days required.
-- Treat optional requirements separately.`,
+- Treat optional requirements separately.
+
+REQUIRED OUTPUT SCHEMA:
+{
+  "uploaded": [
+    { "requirement": "string", "documentId": "string", "documentName": "string", "matchConfidence": 0.9 }
+  ],
+  "missing": [
+    { "requirement": "string", "category": "string", "howToObtain": "string", "estimatedDays": 3, "isOptional": false }
+  ],
+  "optional": [
+    { "requirement": "string", "description": "string" }
+  ]
+}
+Output strict JSON only.`,
 
   actionPlan: `You are FormMitra's action plan generator.
 Given:
@@ -89,8 +121,24 @@ Generate an ordered, prioritized action plan that maximizes the user's readiness
 - Readiness score = % of items completed weighted by priority.
 - "estimatedDaysToReady" assumes the user works through items sequentially.
 - Order items by dependency then by deadline urgency.
-- Each item must have a concrete "title", "description", priority, and estimated minutes.
-- Output strict JSON only.`,
+
+REQUIRED OUTPUT SCHEMA:
+{
+  "readinessScore": 0,
+  "estimatedDaysToReady": 1,
+  "summary": "Short explanation of the plan.",
+  "items": [
+    {
+      "order": 1,
+      "title": "Clear actionable title",
+      "description": "Specific instructions",
+      "priority": "CRITICAL" | "HIGH" | "MEDIUM" | "LOW",
+      "estimatedMinutes": 30,
+      "category": "DOCUMENT" | "PROFILE" | "VERIFICATION" | "SUBMISSION" | "FOLLOW_UP"
+    }
+  ]
+}
+Output strict JSON only.`,
 } as const;
 
 export function buildClassifyPrompt(text: string): { system: string; user: string } {
@@ -107,10 +155,18 @@ export function buildExtractPrompt(text: string, category: DocumentCategory): { 
   };
 }
 
-export function buildOpportunityPrompt(text: string, meta: { title: string; type: string }): { system: string; user: string } {
+export function buildOpportunityPrompt(text: string, meta: { title: string; type: string; sourceUrl?: string | null }): { system: string; user: string } {
+  let userPrompt = `Title hint: ${meta.title}\nType hint: ${meta.type}\n`;
+  
+  if (meta.sourceUrl && text.trim().length < 50) {
+    userPrompt += `\nSource URL: ${meta.sourceUrl}\n\nIMPORTANT INSTRUCTION: You have live web search enabled. The user did not upload a document, so you MUST visit the provided Source URL, read the contents of that webpage, and use that information to extract the requirements.`;
+  } else {
+    userPrompt += `\nOpportunity text:\n"""\n${text.slice(0, 20_000)}\n"""`;
+  }
+
   return {
     system: SYSTEM_PROMPTS.extractOpportunity,
-    user: `Title hint: ${meta.title}\nType hint: ${meta.type}\n\nOpportunity text:\n"""\n${text.slice(0, 20_000)}\n"""`,
+    user: userPrompt,
   };
 }
 

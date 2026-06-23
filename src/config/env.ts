@@ -25,6 +25,11 @@ const EnvSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
+  // Email (Gmail via Nodemailer)
+  SMTP_USER: z.string().email(),       // e.g. formmitra@gmail.com
+  SMTP_PASSWORD: z.string().min(8),    // Google App Password (NOT your real password)
+  // Cron security
+  CRON_SECRET: z.string().min(16),
 });
 
 const parsed = EnvSchema.safeParse(process.env);
