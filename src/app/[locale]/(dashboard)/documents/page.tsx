@@ -6,8 +6,10 @@ import { UploadZone } from "@/components/documents/upload-zone";
 import { DocumentTable } from "@/components/documents/document-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
+import { getTranslations } from "next-intl/server";
 
 export default async function DocumentsPage() {
+  const t = await getTranslations("Documents");
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
@@ -23,12 +25,12 @@ export default async function DocumentsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Document Vault" description="Upload once. Reuse everywhere." />
+      <PageHeader title={t("title")} description={t("subtitle")} />
       <UploadZone />
       {documents.length === 0 ? (
         <EmptyState
-          title="No documents yet"
-          description="Drop your Aadhaar, passport, resume, marksheets — we'll categorize them automatically."
+          title={t("noDocuments")}
+          description={t("noDocumentsDesc")}
         />
       ) : (
         <DocumentTable documents={documents} />

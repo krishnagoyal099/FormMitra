@@ -9,8 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Loader2, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PageHeader } from "@/components/shared/page-header";
+import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
+  const t = useTranslations("Settings");
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
 
@@ -33,55 +35,55 @@ export default function SettingsPage() {
 
     const res = await updateProfileAction(input);
     if (!res.ok) {
-      toast({ title: "Update failed", description: res.message, variant: "destructive" });
+      toast({ title: t("updateFailed"), description: res.message, variant: "destructive" });
     } else {
-      toast({ title: "Profile saved", description: "Your data is encrypted and stored securely." });
+      toast({ title: t("profileSaved"), description: t("profileSavedDesc") });
     }
     setBusy(false);
   }
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Profile & Settings" description="Your data is encrypted at rest with AES-256-GCM." />
+      <PageHeader title={t("title")} description={t("subtitle")} />
       
       <div className="max-w-2xl">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Lock className="h-4 w-4" /> Personal Information
+              <Lock className="h-4 w-4" /> {t("personalInfo")}
             </CardTitle>
-            <CardDescription>This information is used for eligibility checks. It is never exposed in plaintext.</CardDescription>
+            <CardDescription>{t("personalInfoDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={onSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">{t("fullName")}</Label>
                 <Input id="fullName" name="fullName" required disabled={busy} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="dob">Date of Birth</Label>
+                  <Label htmlFor="dob">{t("dob")}</Label>
                   <Input id="dob" name="dob" type="date" required disabled={busy} />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">{t("phone")}</Label>
                   <Input id="phone" name="phone" type="tel" placeholder="+1234567890" required disabled={busy} />
                 </div>
               </div>
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("email")}</Label>
                 <Input id="email" name="email" type="email" required disabled={busy} />
               </div>
               <div>
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">{t("address")}</Label>
                 <Input id="address" name="address" placeholder="123 Main St, City, Country" required disabled={busy} />
               </div>
               <div>
-                <Label htmlFor="income">Annual Income (INR)</Label>
+                <Label htmlFor="income">{t("income")}</Label>
                 <Input id="income" name="income" type="number" min="0" required disabled={busy} />
               </div>
               <Button type="submit" disabled={busy}>
-                {busy ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Save encrypted profile"}
+                {busy ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : t("saveProfile")}
               </Button>
             </form>
           </CardContent>

@@ -11,8 +11,10 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
+  const t = useTranslations("Auth");
   const router = useRouter();
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
@@ -29,7 +31,7 @@ export default function RegisterPage() {
 
     const res = await registerAction(input);
     if (!res.ok) {
-      toast({ title: "Registration failed", description: res.message, variant: "destructive" });
+      toast({ title: t("registrationFailed"), description: res.message, variant: "destructive" });
       setBusy(false);
       return;
     }
@@ -53,29 +55,29 @@ export default function RegisterPage() {
     <div className="grid min-h-screen place-items-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create an account</CardTitle>
-          <CardDescription>Start managing your documents and applications securely.</CardDescription>
+          <CardTitle>{t("registerTitle")}</CardTitle>
+          <CardDescription>{t("registerDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">{t("nameLabel")}</Label>
               <Input id="name" name="name" placeholder="John Doe" required disabled={busy} />
             </div>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("emailLabel")}</Label>
               <Input id="email" name="email" type="email" placeholder="m@example.com" required disabled={busy} />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("passwordLabel")}</Label>
               <Input id="password" name="password" type="password" minLength={8} required disabled={busy} />
             </div>
             <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Create account"}
+              {busy ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : t("registerButton")}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/login" className="text-primary underline-offset-4 hover:underline">Sign in</Link>
+              {t("alreadyHaveAccount")}{" "}
+              <Link href="/login" className="text-primary underline-offset-4 hover:underline">{t("signInLink")}</Link>
             </p>
           </form>
         </CardContent>
