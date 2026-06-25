@@ -33,9 +33,21 @@ const EnvSchema = z.object({
 });
 
 const parsed = EnvSchema.safeParse(process.env);
+
+let envData: z.infer<typeof EnvSchema>;
+
 if (!parsed.success) {
-  // eslint-disable-next-line no-console
-  console.error("❌ Invalid environment variables:", parsed.error.flatten().fieldErrors);
-  throw new Error("Invalid environment configuration.");
+  if (process.env.SKIP_ENV_VALIDATION === "true") {
+    // eslint-disable-next-line no-console
+    console.warn("⚠️ Skipping environment validation due to SKIP_ENV_VALIDATION=true");
+    envData = process.env as unknown as z.infer<typeof EnvSchema>;
+  } else {
+    // eslint-disable-next-line no-console
+    console.error("❌ Invalid environment variables:", parsed.error.flatten().fieldErrors);
+    throw new Error("Invalid environment configuration.");
+  }
+} else {
+  envData = parsed.data;
 }
-export const env = parsed.data;
+
+export const env = envData;
