@@ -1,6 +1,6 @@
-// src/lib/auth/session.ts
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db/prisma";
 
 /**
  * Returns the currently authenticated Clerk user ID.
@@ -10,6 +10,27 @@ import { redirect } from "next/navigation";
 export async function requireUser(): Promise<{ id: string }> {
   const { userId } = await auth();
   if (!userId) redirect("/login");
+
+  // Auto-sync fallback in case the Clerk Webhook failed or was delayed
+  try {
+    const dbUser = await prisma.user.findUnique({ where: { id: userId } });
+    if (!dbUser) {
+      const clerkUser = await currentUser();
+      if (clerkUser) {
+        await prisma.user.create({
+          data: {
+            id: userId,
+            email: clerkUser.emailAddresses[0]?.emailAddress ?? `${userId}@placeholder.com`,
+            name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
+            image: clerkUser.imageUrl,
+          }
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Failed to auto-sync user:", err);
+  }
+
   return { id: userId };
 }
 

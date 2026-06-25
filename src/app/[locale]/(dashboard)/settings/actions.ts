@@ -67,7 +67,8 @@ export async function updateProfileAction(input: unknown): Promise<ActionResult<
     revalidatePath("/settings");
     revalidatePath("/dashboard");
     return createSuccessResult(undefined);
-  } catch {
+  } catch (error) {
+    console.error("Profile save error:", error);
     return createErrorResult("INTERNAL", "Failed to save profile.");
   }
 }
