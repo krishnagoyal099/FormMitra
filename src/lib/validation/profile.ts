@@ -19,6 +19,6 @@ export const ProfileInputSchema = z.object({
   phone: z.string().regex(/^\+?[0-9]{10,15}$/, "Invalid phone"),
   address: z.string().min(5).max(500),
   income: z.number().int().min(0).max(1_000_000_000),
-  education: z.array(EducationEntrySchema).min(1).max(10),
+  education: z.array(EducationEntrySchema).max(10).optional().default([]),
 });
 export type ProfileInput = z.infer<typeof ProfileInputSchema>;
