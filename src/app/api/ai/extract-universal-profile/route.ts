@@ -5,17 +5,17 @@
 // Called from the Settings page when the user clicks "Sync Profile".
 // ─────────────────────────────────────────────────────────────────────────────
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth/config";
+import { auth } from "@clerk/nextjs/server";
 import { extractUniversalProfileService } from "@/lib/ai/services/extract-universal-profile";
 
 export async function POST(): Promise<NextResponse> {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const { userId } = await auth();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const result = await extractUniversalProfileService({ userId: session.user.id });
+    const result = await extractUniversalProfileService({ userId });
     return NextResponse.json({
       success: true,
       completionPct: result.completionPct,

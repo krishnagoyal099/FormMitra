@@ -31,7 +31,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     <div
       className={cn(
         "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm transition-colors",
-        "text-white/70 hover:text-white hover:bg-white/5",
+        "text-black/70 hover:text-black hover:bg-black/5",
         isPending && "opacity-50 pointer-events-none",
         className
       )}
@@ -44,11 +44,11 @@ export function LanguageSwitcher({ className }: { className?: string }) {
         id="locale-switcher"
         value={locale}
         onChange={onSelectChange}
-        className="bg-transparent border-none outline-none text-sm cursor-pointer text-white/70 hover:text-white"
+        className="bg-transparent border-none outline-none text-sm cursor-pointer text-black/70 hover:text-black"
         aria-label={t("label")}
       >
         {routing.locales.map((loc) => (
-          <option key={loc} value={loc} className="bg-[#1F1F1F] text-white">
+          <option key={loc} value={loc} className="bg-[#F7F7F7] text-black">
             {t(loc)}
           </option>
         ))}

@@ -1,6 +1,5 @@
 // src/components/documents/category-badge.tsx
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils/cn";
 import { LucideIcon, IdCard, Home, Wallet, GraduationCap, FileText, Image as ImageIcon, HeartPulse, Landmark, File } from "lucide-react";
 
 const CATEGORY_CONFIG: Record<string, { icon: LucideIcon; label: string; variant: "default" | "secondary" | "outline" }> = {

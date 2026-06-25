@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ClipboardList, FileCheck, CalendarClock, ArrowRight, Loader2 } from "lucide-react";
+import { ClipboardList, FileCheck, CalendarClock, ArrowRight } from "lucide-react";
 
 import { OpportunityAnalyzer } from "@/components/opportunities/opportunity-analyzer";
 

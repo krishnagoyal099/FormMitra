@@ -4,10 +4,10 @@ import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { ClerkProvider } from "@clerk/nextjs";
 import "../globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SessionProvider } from "@/components/providers/session-provider";
 import { siteConfig } from "@/config/site";
 import { routing } from "@/i18n/routing";
 
@@ -56,18 +56,23 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
-        {/* Provide translations to all Client Components in this subtree */}
-        <NextIntlClientProvider messages={messages}>
-          <SessionProvider>
+    <ClerkProvider
+      signInFallbackRedirectUrl={`/${locale}/dashboard`}
+      signUpFallbackRedirectUrl={`/${locale}/dashboard`}
+      signInUrl={`/${locale}/login`}
+      signUpUrl={`/${locale}/register`}
+    >
+      <html lang={locale} suppressHydrationWarning>
+        <body className={`${inter.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
+          {/* Provide translations to all Client Components in this subtree */}
+          <NextIntlClientProvider messages={messages}>
             <TooltipProvider delayDuration={150}>
               {children}
               <Toaster />
             </TooltipProvider>
-          </SessionProvider>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+          </NextIntlClientProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

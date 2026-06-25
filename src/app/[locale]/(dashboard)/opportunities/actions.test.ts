@@ -18,8 +18,8 @@ describe('analyzeOpportunityAction', () => {
 
   it('should return NOT_FOUND if opportunity is already analyzed', async () => {
     // Simulate 0 rows updated (meaning status was not DRAFT)
-    vi.mocked(prisma.opportunity.updateMany).mockResolvedValue({ count: 0 } as any);
-    vi.mocked(prisma.opportunity.findUnique).mockResolvedValue({ id: '1', status: 'ANALYZED' } as any);
+    vi.mocked(prisma.opportunity.updateMany).mockResolvedValue({ count: 0 } as never);
+    vi.mocked(prisma.opportunity.findUnique).mockResolvedValue({ id: '1', status: 'ANALYZED' } as never);
 
     const res = await analyzeOpportunityAction('opp_123');
     
@@ -28,23 +28,23 @@ describe('analyzeOpportunityAction', () => {
   });
 
   it('should run full pipeline and mark as ANALYZED on success', async () => {
-    vi.mocked(prisma.opportunity.updateMany).mockResolvedValue({ count: 1 } as any);
+    vi.mocked(prisma.opportunity.updateMany).mockResolvedValue({ count: 1 } as never);
     vi.mocked(prisma.opportunity.findUniqueOrThrow).mockResolvedValue({
       id: 'opp_123', extractedText: 'text', title: 'Test', type: 'SCHOLARSHIP'
-    } as any);
+    } as never);
 
     vi.mocked(extractOpportunityService).mockResolvedValue({
       eligibilityRequirements: [], requiredDocuments: [], deadlines: [], applicationSteps: [], importantNotes: []
-    } as any);
+    } as never);
 
     vi.mocked(computeEligibility).mockResolvedValue({
       status: 'ELIGIBLE', confidence: 0.9, reasons: [], matchedCriteria: [], unmatchedCriteria: [], warnings: []
-    } as any);
+    } as never);
 
-    vi.mocked(generateMissingDocs).mockResolvedValue({ uploaded: [], missing: [], optional: [] } as any);
+    vi.mocked(generateMissingDocs).mockResolvedValue({ uploaded: [], missing: [], optional: [] } as never);
     vi.mocked(generateActionPlan).mockResolvedValue({
       readinessScore: 100, estimatedDaysToReady: 0, summary: 'Ready', items: []
-    } as any);
+    } as never);
 
     const res = await analyzeOpportunityAction('opp_123');
     
@@ -58,8 +58,8 @@ describe('analyzeOpportunityAction', () => {
   });
 
   it('should catch AI errors and mark opportunity as FAILED', async () => {
-    vi.mocked(prisma.opportunity.updateMany).mockResolvedValue({ count: 1 } as any);
-    vi.mocked(prisma.opportunity.findUniqueOrThrow).mockResolvedValue({ id: 'opp_123' } as any);
+    vi.mocked(prisma.opportunity.updateMany).mockResolvedValue({ count: 1 } as never);
+    vi.mocked(prisma.opportunity.findUniqueOrThrow).mockResolvedValue({ id: 'opp_123' } as never);
     
     // Simulate ASI:ONE API crashing
     vi.mocked(extractOpportunityService).mockRejectedValue(new Error('ASI:ONE API Timeout'));

@@ -1,9 +1,8 @@
 // src/components/ui/toaster.tsx
 "use client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, AlertTriangle, Info, X } from "lucide-react";
+import { CheckCircle2, AlertTriangle, X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { useEffect } from "react";
 
 export function Toaster() {
   const { toasts, dismiss } = useToast();

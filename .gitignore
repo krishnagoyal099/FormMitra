@@ -45,3 +45,6 @@ Thumbs.db
 # IDE Files
 .idea/
 *.swp
+
+.vercel
+*.txt

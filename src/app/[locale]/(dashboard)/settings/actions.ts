@@ -21,7 +21,7 @@ export async function updateProfileAction(input: unknown): Promise<ActionResult<
     return createErrorResult("VALIDATION", "Invalid profile data.", parsed.error.issues);
   }
 
-  const { fullName, dob, email, phone, address, income, education } = parsed.data;
+  const { fullName, dob, phone, address, income, education } = parsed.data;
 
   const fullNameBlob = toStorage(encryptPII(fullName));
   const dobBlob = toStorage(encryptPII(dob));
@@ -67,7 +67,7 @@ export async function updateProfileAction(input: unknown): Promise<ActionResult<
     revalidatePath("/settings");
     revalidatePath("/dashboard");
     return createSuccessResult(undefined);
-  } catch (err) {
+  } catch {
     return createErrorResult("INTERNAL", "Failed to save profile.");
   }
 }

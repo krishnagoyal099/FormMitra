@@ -1,6 +1,6 @@
 // src/app/(dashboard)/dashboard/page.tsx
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth/config";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 import { getTranslations } from "next-intl/server";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -14,9 +14,10 @@ import { DeleteOpportunityButton } from "@/components/opportunities/delete-oppor
 
 export default async function DashboardPage() {
   const t = await getTranslations("Dashboard");
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-  const userId = session.user.id;
+  const { userId } = await auth();
+  if (!userId) redirect("/login");
+  const clerkUser = await currentUser();
+  const displayName = clerkUser?.firstName ?? clerkUser?.fullName?.split(" ")[0] ?? "there";
 
   const [docCount, oppCount, planCount, upcoming] = await Promise.all([
     prisma.document.count({ where: { userId, deletedAt: null } }),
@@ -39,7 +40,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title={t("welcome", { name: session.user.name?.split(" ")[0] ?? "there" })}
+        title={t("welcome", { name: displayName })}
         description={t("subtitle")}
         action={<Button asChild><Link href="/opportunities/new">{t("analyzeNew")}</Link></Button>}
       />

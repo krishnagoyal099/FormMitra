@@ -1,6 +1,6 @@
 // src/app/api/ai/analyze-opportunity/route.ts
 import { NextRequest } from "next/server";
-import { auth } from "@/lib/auth/config";
+import { auth } from "@clerk/nextjs/server";
 import { extractOpportunityService } from "@/lib/ai/services/extract-opportunity";
 import { z } from "zod";
 
@@ -11,8 +11,8 @@ const Schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return new Response("Unauthorized", { status: 401 });
+  const { userId } = await auth();
+  if (!userId) return new Response("Unauthorized", { status: 401 });
 
   try {
     const body = await req.json();

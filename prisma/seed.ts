@@ -14,6 +14,7 @@ async function main() {
     where: { email },
     update: {},
     create: {
+      id: "user_seed_admin",
       email,
       name: "Admin User",
       passwordHash,

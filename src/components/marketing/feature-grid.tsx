@@ -13,7 +13,7 @@ export async function FeatureGrid() {
   ];
 
   return (
-    <section className="relative z-10 w-full pb-24 border-t border-white/5 bg-dot-pattern">
+    <section className="relative z-10 w-full pb-24 border-t border-black/5 bg-dot-pattern">
       <div className="grid grid-cols-1 md:grid-cols-4 w-full">
         {FEATURES.map((f) => (
           <div key={f.title} className="col-span-1 px-6 md:px-8 flex flex-col pb-12 pt-16 group">
@@ -26,7 +26,7 @@ export async function FeatureGrid() {
                 className="w-full h-auto opacity-80 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-700 ease-out object-contain"
               />
             </div>
-            <h3 className="font-mono text-xl md:text-2xl font-bold tracking-wider text-white mb-4">{f.title}</h3>
+            <h3 className="font-mono text-xl md:text-2xl font-bold tracking-wider text-black mb-4">{f.title}</h3>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed pr-4">{f.desc}</p>
           </div>
         ))}

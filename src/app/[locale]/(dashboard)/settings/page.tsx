@@ -311,7 +311,7 @@ function ExtensionSection() {
             <div className="space-y-1 flex-1">
               <p className="font-medium text-sm">Install the Chrome Extension</p>
               <p className="text-xs text-muted-foreground">
-                Install the extension, paste your token in the extension settings, and you're ready to auto-fill forms.
+                Install the extension, paste your token in the extension settings, and you&apos;re ready to auto-fill forms.
               </p>
               <Button size="sm" variant="outline" className="mt-2 text-xs" disabled>
                 <ExternalLink className="h-3 w-3 mr-1.5" />

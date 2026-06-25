@@ -1,68 +1,51 @@
-// src/middleware.ts
-// IMPORTANT: Middleware runs in the Edge Runtime — no Node.js APIs, no Prisma.
-//
-// This middleware composes two concerns:
-// 1. next-intl locale routing — detects user language, prefixes URLs (e.g. /hi/dashboard)
-// 2. Auth guard — redirects unauthenticated users to /login for protected routes
-//
-// next-auth@5.0.0-beta uses "authjs." prefix for cookies.
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import createMiddleware from "next-intl/middleware";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
-
-// next-auth v5 beta cookie names
-const SESSION_COOKIE =
-  process.env.NODE_ENV === "production"
-    ? "__Secure-authjs.session-token"
-    : "authjs.session-token";
-
-// Fallback: next-auth v4 style
-const SESSION_COOKIE_LEGACY = "next-auth.session-token";
-
-// Protected route prefixes (without locale prefix — we strip it below)
-const PROTECTED_PATHS = ["/dashboard", "/documents", "/opportunities", "/settings", "/onboarding"];
-
-/** Strips a locale prefix from a pathname if present (e.g. /hi/dashboard → /dashboard) */
-function stripLocale(pathname: string): string {
-  for (const locale of routing.locales) {
-    if (pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)) {
-      return pathname.slice(locale.length + 1) || "/";
-    }
-  }
-  return pathname;
-}
 
 const handleI18nRouting = createMiddleware(routing);
 
-export function middleware(req: NextRequest) {
-  // Step 1: Run the next-intl middleware to handle locale detection & URL rewriting
-  const i18nResponse = handleI18nRouting(req);
+const isProtectedRoute = createRouteMatcher([
+  '/(.*)/dashboard(.*)',
+  '/(.*)/documents(.*)',
+  '/(.*)/opportunities(.*)',
+  '/(.*)/settings(.*)',
+  '/(.*)/onboarding(.*)',
+  '/dashboard(.*)',
+  '/documents(.*)',
+  '/opportunities(.*)',
+  '/settings(.*)',
+  '/onboarding(.*)'
+])
 
-  // Step 2: Determine the effective pathname (locale-stripped) for auth checking
-  const strippedPath = stripLocale(req.nextUrl.pathname);
+// Routes that handle their own auth (Bearer token or webhook signature)
+const isPublicApiRoute = createRouteMatcher([
+  '/api/webhooks/(.*)',      // Clerk webhooks — verified by svix signature
+  '/api/extension/profile', // Bearer token auth, not Clerk sessions
+])
 
-  const isProtected = PROTECTED_PATHS.some(
-    (path) => strippedPath === path || strippedPath.startsWith(`${path}/`)
-  );
-
-  if (isProtected) {
-    const hasSession =
-      req.cookies.has(SESSION_COOKIE) || req.cookies.has(SESSION_COOKIE_LEGACY);
-
-    if (!hasSession) {
-      // Redirect to login, preserving the original path as callback
-      const loginUrl = new URL("/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
-      return NextResponse.redirect(loginUrl);
-    }
+export default clerkMiddleware(async (auth, req) => {
+  if (!isPublicApiRoute(req) && isProtectedRoute(req)) {
+    await auth.protect()
   }
 
-  // Return the i18n-modified response (with locale headers/rewrites applied)
-  return i18nResponse;
-}
+  // Bypass next-intl if this is a Clerk handshake or Clerk API route
+  if (
+    req.nextUrl.searchParams.has('__clerk_handshake') ||
+    req.nextUrl.pathname.startsWith('/__clerk')
+  ) {
+    return;
+  }
+
+  return handleI18nRouting(req)
+})
 
 export const config = {
-  // Match all pathnames except Next.js internals, API routes, and static files
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
-};
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+    // Always run for Clerk-specific frontend API routes
+    '/__clerk/(.*)',
+  ],
+}

@@ -6,7 +6,6 @@ import { EligibilityReportView } from "@/components/eligibility/eligibility-repo
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
-import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 

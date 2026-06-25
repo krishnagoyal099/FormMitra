@@ -10,7 +10,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { NextRequest, NextResponse } from "next/server";
 import { createHash, randomBytes } from "crypto";
-import { auth } from "@/lib/auth/config";
+import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
@@ -56,8 +56,8 @@ const CreateTokenSchema = z.object({
 });
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const { userId } = await auth();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Enforce a max-token limit per user to prevent token sprawl
   const activeCount = await prisma.extensionToken.count({
     where: {
-      userId: session.user.id,
+      userId,
       revokedAt: null,
       expiresAt: { gt: new Date() },
     },
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const record = await prisma.extensionToken.create({
     data: {
-      userId: session.user.id,
+      userId,
       tokenHash,
       label: parsed.data.label,
       expiresAt,
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Audit log
   await prisma.auditLog.create({
     data: {
-      userId: session.user.id,
+      userId,
       action: "EXTENSION_TOKEN_CREATED",
       entity: "ExtensionToken",
       entityId: record.id,
@@ -123,14 +123,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
 // ── GET: List active tokens ───────────────────────────────────────────────────
 export async function GET(): Promise<NextResponse> {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const { userId } = await auth();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const tokens = await prisma.extensionToken.findMany({
     where: {
-      userId: session.user.id,
+      userId,
       revokedAt: null,
     },
     select: {
@@ -150,8 +150,8 @@ export async function GET(): Promise<NextResponse> {
 const RevokeSchema = z.object({ id: z.string().cuid() });
 
 export async function DELETE(req: NextRequest): Promise<NextResponse> {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const { userId } = await auth();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -166,7 +166,7 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
     where: { id: parsed.data.id },
     select: { userId: true, revokedAt: true },
   });
-  if (!token || token.userId !== session.user.id) {
+  if (!token || token.userId !== userId) {
     return NextResponse.json({ error: "Token not found" }, { status: 404 });
   }
   if (token.revokedAt) {
@@ -180,7 +180,7 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
 
   await prisma.auditLog.create({
     data: {
-      userId: session.user.id,
+      userId,
       action: "EXTENSION_TOKEN_REVOKED",
       entity: "ExtensionToken",
       entityId: parsed.data.id,

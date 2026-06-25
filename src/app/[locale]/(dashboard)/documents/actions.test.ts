@@ -41,7 +41,7 @@ describe('registerDocumentAction', () => {
 
   it('should return DEDUPED if file already exists', async () => {
     vi.mocked(fetchUploadThingFile).mockResolvedValue(Buffer.from('dummy file content'));
-    vi.mocked(prisma.document.findFirst).mockResolvedValue({ id: 'existing_doc_id' } as any);
+    vi.mocked(prisma.document.findFirst).mockResolvedValue({ id: 'existing_doc_id' } as never);
 
     const res = await registerDocumentAction({
       uploadThingKey: 'key_123',
@@ -60,13 +60,13 @@ describe('registerDocumentAction', () => {
   it('should create document and schedule processing if valid and new', async () => {
     vi.mocked(fetchUploadThingFile).mockResolvedValue(Buffer.from('new file content'));
     vi.mocked(prisma.document.findFirst).mockResolvedValue(null);
-    vi.mocked(prisma.document.create).mockResolvedValue({ id: 'new_doc_id' } as any);
+    vi.mocked(prisma.document.create).mockResolvedValue({ id: 'new_doc_id' } as never);
     // Mock the findUniqueOrThrow that processDocument will call
     vi.mocked(prisma.document.findUniqueOrThrow).mockResolvedValue({
       id: 'new_doc_id',
       userId: 'user_123',
       mimeType: 'application/pdf'
-    } as any);
+    } as never);
 
     const res = await registerDocumentAction({
       uploadThingKey: 'key_123',

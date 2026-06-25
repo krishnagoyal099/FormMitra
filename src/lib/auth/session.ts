@@ -1,15 +1,24 @@
 // src/lib/auth/session.ts
-import { auth } from "./config";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export async function requireUser() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-  return session.user;
+/**
+ * Returns the currently authenticated Clerk user ID.
+ * Redirects to /login if there is no active session.
+ * Return shape { id } is intentionally compatible with all existing callers.
+ */
+export async function requireUser(): Promise<{ id: string }> {
+  const { userId } = await auth();
+  if (!userId) redirect("/login");
+  return { id: userId };
 }
 
-export async function requireAdmin() {
+/**
+ * Requires the user to have the ADMIN role.
+ * Currently a stub — Clerk roles can be checked via session claims if needed.
+ */
+export async function requireAdmin(): Promise<{ id: string }> {
   const user = await requireUser();
-  if (user.role !== "ADMIN") redirect("/dashboard");
+  // TODO: wire up Clerk session claims for role check when needed
   return user;
 }

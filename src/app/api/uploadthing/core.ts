@@ -1,14 +1,14 @@
 // src/app/api/uploadthing/core.ts
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { auth } from "@/lib/auth/config";
+import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 
 const f = createUploadthing();
 
 const authenticate = async () => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  return { userId: session.user.id };
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  return { userId };
 };
 
 export const uploadRouter = {

@@ -24,7 +24,7 @@ export function OpportunityAnalyzer({ oppId }: { oppId: string }) {
             variant: "destructive",
           });
         }
-      } catch (err) {
+      } catch {
         if (ignore) return;
         toast({
           title: "System Error",

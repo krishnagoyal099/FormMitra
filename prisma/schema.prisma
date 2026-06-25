@@ -102,7 +102,7 @@ enum FileType {
 // ────────────────────────────────────────────────────────────────────────────
 
 model User {
-  id              String   @id @default(cuid())
+  id              String   @id   // Set to Clerk's userId (user_xxx) by the /api/webhooks/clerk handler
   email           String   @unique
   emailVerified   DateTime?
   name            String?

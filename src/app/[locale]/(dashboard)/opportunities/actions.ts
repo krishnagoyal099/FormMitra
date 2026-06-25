@@ -15,7 +15,6 @@ import { fetchUploadThingFile } from "@/lib/storage/server";
 import { extractTextFromFile } from "@/lib/files/extract-text";
 import { logger } from "@/lib/logger";
 import { createErrorResult, createSuccessResult, type ActionResult } from "@/lib/utils/action";
-import { env } from "@/config/env";
 import { sendAnalysisCompleteEmail } from "@/lib/email/nodemailer";
 
 export async function createOpportunityAction(

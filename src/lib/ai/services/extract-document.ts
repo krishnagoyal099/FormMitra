@@ -2,7 +2,7 @@
 import { randomUUID } from "crypto";
 import { callAsione } from "../asi-one";
 import { ClassifiedDocumentSchema, type ClassifiedDocument } from "../schemas";
-import { buildExtractPrompt, PROMPT_VERSION } from "../prompts";
+import { buildExtractPrompt } from "../prompts";
 import type { DocumentCategory } from "@/types/domain";
 
 export async function extractDocumentService(text: string, category: DocumentCategory) {

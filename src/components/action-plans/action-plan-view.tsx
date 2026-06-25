@@ -4,7 +4,6 @@ import { useTransition } from "react";
 import type { Prisma, ActionItemStatus } from "@prisma/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ReadinessProgress } from "./readiness-progress";
 import { updateActionItemStatusAction } from "@/app/[locale]/(dashboard)/opportunities/actions";
 import { CheckCircle2, Circle, Clock, Loader2 } from "lucide-react";
@@ -47,7 +46,7 @@ export function ActionPlanView({ plan }: { plan: Plan }) {
         <Card className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground border-dashed">
           <CheckCircle2 className="h-10 w-10 mb-4 text-muted-foreground/50" />
           <p className="font-medium text-foreground">No specific action items found.</p>
-          <p className="text-sm mt-1">We couldn't extract any specific application steps or document requirements from the provided source.</p>
+          <p className="text-sm mt-1">We couldn&apos;t extract any specific application steps or document requirements from the provided source.</p>
         </Card>
       ) : (
         <div className="space-y-3">

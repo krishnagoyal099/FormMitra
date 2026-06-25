@@ -23,8 +23,8 @@ jobs:
       DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy?schema=public"
       # Dummy encryption key for build environment validation
       PII_ENCRYPTION_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
-      NEXTAUTH_SECRET: "dummy_secret_for_build_only_32chars"
-      NEXTAUTH_URL: "http://localhost:3000"
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_ZHVtbXktcHVibGlzaGFibGUta2V5LmNsZXJrLmFjY291bnRzLmRldiQ"
+      CLERK_SECRET_KEY: "sk_test_dummy_secret_key_clerk_for_build_only"
 
     steps:
       - name: Checkout code

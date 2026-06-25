@@ -9,7 +9,7 @@ export async function extractTextFromFile(buffer: Buffer, mimeType: string): Pro
       const result = await pdfParse(buffer);
       if (result.text && result.text.trim().length > 20) return result.text;
       // PDF might be image-based → render pages and OCR (simplified for MVP)
-    } catch (err) {
+    } catch {
       // fall through to OCR path
     }
     return "";
