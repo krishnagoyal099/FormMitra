@@ -2,7 +2,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { unstable_after as after } from "next/server";
+import { after } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/session";
 import { checkRateLimit } from "@/lib/rate-limit/redis";

@@ -12,7 +12,6 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: "20mb",
     },
-    after: true,
   },
   webpack: (config) => {
     config.resolve.alias = {
